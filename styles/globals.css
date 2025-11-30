@@ -1,0 +1,6 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+html, body, #__next { height: 100%; }
+body { background: linear-gradient(180deg,#fff7f5,#fffbf0); }
+.input { width:100%; padding:0.5rem; border-radius:0.5rem; border:1px solid #e5e7eb }
