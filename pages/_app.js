@@ -4,7 +4,7 @@ import { supabase } from '../lib/supabaseClient'
 
 export default function MyApp({ Component, pageProps }) {
 
-  // Prevent crash during prerender (404, 500, static build)
+  // Prevent Supabase during prerender / SSR on Vercel
   if (!supabase) return <Component {...pageProps} />
 
   return (
