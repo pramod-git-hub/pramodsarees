@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic'
 import Head from 'next/head'
 import Header from '../components/Header'
 import ProductCard from '../components/ProductCard'
