@@ -12,7 +12,7 @@ export default function AdminPanel({onAdded}){
     setLoading(true)
     const fileName = `${Date.now()}-${file.name}`
     const { data: uploadData, error: upErr } = await supabase.storage
-      .from('product-images')
+      .from('sarees')
       .upload(fileName, file, { cacheControl: '3600', upsert: false })
     if(upErr){ setLoading(false); return alert(upErr.message) }
     const imagePath = uploadData.path

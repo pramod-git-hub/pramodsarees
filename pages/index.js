@@ -1,6 +1,7 @@
+export const dynamic = 'force-dynamic'
 import Head from 'next/head'
-import Header from '../components/Header'
-import ProductCard from '../components/ProductCard'
+import Header from '../components/Header.jsx'
+import ProductCard from '../components/ProductCard.jsx'
 import { supabase } from '../lib/supabaseClient'
 export default function Home({products}){
   return (
