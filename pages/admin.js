@@ -1,6 +1,6 @@
 export const dynamic = 'force-dynamic'
-import Header from '../components/Header.jsx'
-import AdminPanel from '../components/AdminPanel.jsx'
+import Header from '../components/Header'
+import AdminPanel from '../components/AdminPanel'
 import { supabase } from '../lib/supabaseClient'
 import { useState } from 'react'
 export default function Admin({initialProducts}){
