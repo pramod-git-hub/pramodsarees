@@ -14,9 +14,10 @@ export default function AdminPanel({ onAdded }) {
     if (!file) return alert('Select image')
     setLoading(true)
 
-    const cleanName = file.name.replace(/\s+/g, "-"); 
-    const fileName = `${Date.now()}-${cleanName}`;
+   const cleanName = file.name.replace(/\s+/g, "-");
+const fileName = `${Date.now()}-${cleanName}`;
 
+<<<<<<< HEAD
 
     // ⭐ FIXED — Correct bucket: product-images
     const { data: uploadData, error: uploadError } = await supabase.storage
@@ -25,11 +26,20 @@ export default function AdminPanel({ onAdded }) {
         cacheControl: '3600',
         upsert: false
       })
+=======
+// ⭐ Upload image to Supabase Storage
+const { data: uploadData, error: uploadError } = await supabase.storage
+  .from("product-images")
+  .upload(fileName, file, {
+    cacheControl: "3600",
+    upsert: false,
+  });
+>>>>>>> 0a303c1 (Fix product page image URL)
 
-    if (uploadError) {
-      setLoading(false)
-      return alert(uploadError.message)
-    }
+if (uploadError) {
+  setLoading(false);
+  return alert("Image upload failed: " + uploadError.message);
+}
 
     const imagePath = uploadData.path
 

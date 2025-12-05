@@ -15,42 +15,36 @@ export async function getServerSideProps({ params }) {
     return { notFound: true };
   }
 
-  // Generate public image URL
-  const { data: urlData, error: urlErr } = supabase
-    .storage
+  // Convert image_path → full public URL
+  const { data: urlData } = supabase.storage
     .from("product-images")
     .getPublicUrl(product.image_path);
 
-  if (urlErr) {
-    console.log("IMAGE URL ERROR:", urlErr);
-  }
+  const publicUrl = urlData?.publicUrl || null;
 
   return {
     props: {
       product: {
         ...product,
-        image_url: urlData?.publicUrl || null,
+        image_url: publicUrl, // Always send final URL to component
       },
-    }
+    },
   };
 }
 
 export default function ProductPage({ product }) {
-  console.log("RENDER PRODUCT:", product);
-
   return (
     <div style={{ padding: "40px" }}>
       <div style={{ display: "flex", gap: "40px" }}>
-       
         <img
-          src={product.image_url}
+          src={product.image_url || "/placeholder.png"}
           alt={product.title}
           style={{
             width: "500px",
             height: "500px",
             objectFit: "cover",
             background: "#eee",
-            borderRadius: "10px"
+            borderRadius: "10px",
           }}
         />
 
@@ -59,22 +53,20 @@ export default function ProductPage({ product }) {
           <p>{product.description}</p>
           <h2>₹{product.price}</h2>
 
-          <button style={{
-            padding: "10px 20px",
-            background: "#d97706",
-            border: "none",
-            color: "#fff",
-            borderRadius: "8px",
-            cursor: "pointer"
-          }}>
+          <button
+            style={{
+              padding: "10px 20px",
+              background: "#d97706",
+              border: "none",
+              color: "#fff",
+              borderRadius: "8px",
+              cursor: "pointer",
+            }}
+          >
             Buy Now
           </button>
         </div>
-
       </div>
     </div>
   );
 }
-
-
-
