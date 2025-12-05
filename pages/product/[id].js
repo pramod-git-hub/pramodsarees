@@ -3,7 +3,11 @@ import { supabase } from "../../lib/supabaseClient";
 export async function getServerSideProps({ params }) {
   const { id } = params;
 
-  // Fetch product
+  if (!id) {
+    return { notFound: true };
+  }
+
+  // Fetch product safely at runtime (NOT during build)
   const { data: product, error } = await supabase
     .from("products")
     .select("*")
@@ -11,22 +15,20 @@ export async function getServerSideProps({ params }) {
     .single();
 
   if (error || !product) {
-    console.log("PRODUCT ERROR:", error);
     return { notFound: true };
   }
 
-  // Convert image_path → full public URL
-  const { data: urlData } = supabase.storage
+  // Generate public URL
+  const { data: urlData } = supabase
+    .storage
     .from("product-images")
     .getPublicUrl(product.image_path);
-
-  const publicUrl = urlData?.publicUrl || null;
 
   return {
     props: {
       product: {
         ...product,
-        image_url: publicUrl, // Always send final URL to component
+        image_url: urlData?.publicUrl || "",
       },
     },
   };
@@ -37,7 +39,7 @@ export default function ProductPage({ product }) {
     <div style={{ padding: "40px" }}>
       <div style={{ display: "flex", gap: "40px" }}>
         <img
-          src={product.image_url || "/placeholder.png"}
+          src={product.image_url}
           alt={product.title}
           style={{
             width: "500px",
