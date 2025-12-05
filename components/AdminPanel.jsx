@@ -14,7 +14,9 @@ export default function AdminPanel({ onAdded }) {
     if (!file) return alert('Select image')
     setLoading(true)
 
-    const fileName = `${Date.now()}-${file.name}`
+    const cleanName = file.name.replace(/\s+/g, "-"); 
+    const fileName = `${Date.now()}-${cleanName}`;
+
 
     // ⭐ FIXED — Correct bucket: product-images
     const { data: uploadData, error: uploadError } = await supabase.storage
