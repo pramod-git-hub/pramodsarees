@@ -3,22 +3,16 @@ import { supabase } from "../../lib/supabaseClient";
 export async function getServerSideProps({ params }) {
   const { id } = params;
 
-  if (!id) {
-    return { notFound: true };
-  }
+  if (!id) return { notFound: true };
 
-  // Fetch product safely at runtime (NOT during build)
   const { data: product, error } = await supabase
     .from("products")
     .select("*")
     .eq("id", id)
     .single();
 
-  if (error || !product) {
-    return { notFound: true };
-  }
+  if (error || !product) return { notFound: true };
 
-  // Generate public URL
   const { data: urlData } = supabase
     .storage
     .from("product-images")
@@ -28,6 +22,9 @@ export async function getServerSideProps({ params }) {
     props: {
       product: {
         ...product,
+        title: product.title ?? "No Title",
+        description: product.description ?? "No Description",
+        price: product.price ?? "0",
         image_url: urlData?.publicUrl || "",
       },
     },
@@ -38,6 +35,7 @@ export default function ProductPage({ product }) {
   return (
     <div style={{ padding: "40px" }}>
       <div style={{ display: "flex", gap: "40px" }}>
+        
         <img
           src={product.image_url}
           alt={product.title}
@@ -68,6 +66,7 @@ export default function ProductPage({ product }) {
             Buy Now
           </button>
         </div>
+
       </div>
     </div>
   );
