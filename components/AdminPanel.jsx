@@ -14,11 +14,10 @@ export default function AdminPanel({ onAdded }) {
     if (!file) return alert("Select image");
     setLoading(true);
 
-    // Clean filename
     const cleanName = file.name.replace(/\s+/g, "-");
     const fileName = `${Date.now()}-${cleanName}`;
 
-    // ⭐ Upload image to Supabase Storage (product-images bucket)
+    // ⭐ Upload image to Supabase Storage
     const { data: uploadData, error: uploadError } = await supabase.storage
       .from("product-images")
       .upload(fileName, file, {
@@ -33,21 +32,20 @@ export default function AdminPanel({ onAdded }) {
 
     const imagePath = uploadData.path;
 
-    // ⭐ Insert product record
-    const { error: insertError } = await supabase
-      .from("products")
-      .insert([
-        {
-          title,
-          description: desc,
-          price,
-          image_path: imagePath,
-        },
-      ]);
+    const { error: insertError } = await supabase.from("products").insert([
+      {
+        title,
+        description: desc,
+        price,
+        image_path: imagePath,
+      },
+    ]);
 
     setLoading(false);
 
-    if (insertError) return alert(insertError.message);
+    if (insertError) {
+      return alert(insertError.message);
+    }
 
     // Reset form
     setTitle("");
@@ -55,10 +53,40 @@ export default function AdminPanel({ onAdded }) {
     setPrice("");
     setFile(null);
 
-    // Refresh admin panel data
+    // Refresh admin panel
     if (onAdded) onAdded();
   }
 
   return (
-    <for
+    <form className="space-y-3" onSubmit={handleAdd}>
+      <input
+        value={title}
+        onChange={(e) => setTitle(e.target.value)}
+        placeholder="Title"
+        className="input"
+      />
+
+      <textarea
+        value={desc}
+        onChange={(e) => setDesc(e.target.value)}
+        placeholder="Description"
+        className="input"
+      />
+
+      <input
+        value={price}
+        onChange={(e) => setPrice(e.target.value)}
+        placeholder="Price"
+        className="input"
+      />
+
+      <input
+        type="file"
+        accept="image/*"
+        onChange={(e) => setFile(e.target.files[0])}
+      />
+
+      <button
+        className="px-4 py-2 bg-green-600 text-white rounded"
+        disabled={loading}
 
