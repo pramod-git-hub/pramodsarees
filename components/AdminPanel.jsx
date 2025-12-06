@@ -1,106 +1,64 @@
-import { useState } from 'react'
-import { supabase } from '../lib/supabaseClient'
+import { useState } from "react";
+import { supabase } from "../lib/supabaseClient";
 
 export default function AdminPanel({ onAdded }) {
-  const [title, setTitle] = useState('')
-  const [desc, setDesc] = useState('')
-  const [price, setPrice] = useState('')
-  const [file, setFile] = useState(null)
-  const [loading, setLoading] = useState(false)
+  const [title, setTitle] = useState("");
+  const [desc, setDesc] = useState("");
+  const [price, setPrice] = useState("");
+  const [file, setFile] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   async function handleAdd(e) {
-    e.preventDefault()
+    e.preventDefault();
 
-    if (!file) return alert('Select image')
-    setLoading(true)
+    if (!file) return alert("Select image");
+    setLoading(true);
 
-   const cleanName = file.name.replace(/\s+/g, "-");
-const fileName = `${Date.now()}-${cleanName}`;
+    // Clean filename
+    const cleanName = file.name.replace(/\s+/g, "-");
+    const fileName = `${Date.now()}-${cleanName}`;
 
-<<<<<<< HEAD
-
-    // ⭐ FIXED — Correct bucket: product-images
+    // ⭐ Upload image to Supabase Storage (product-images bucket)
     const { data: uploadData, error: uploadError } = await supabase.storage
-      .from('product-images')
+      .from("product-images")
       .upload(fileName, file, {
-        cacheControl: '3600',
-        upsert: false
-      })
-=======
-// ⭐ Upload image to Supabase Storage
-const { data: uploadData, error: uploadError } = await supabase.storage
-  .from("product-images")
-  .upload(fileName, file, {
-    cacheControl: "3600",
-    upsert: false,
-  });
->>>>>>> 0a303c1 (Fix product page image URL)
+        cacheControl: "3600",
+        upsert: false,
+      });
 
-if (uploadError) {
-  setLoading(false);
-  return alert("Image upload failed: " + uploadError.message);
-}
+    if (uploadError) {
+      setLoading(false);
+      return alert("Image upload failed: " + uploadError.message);
+    }
 
-    const imagePath = uploadData.path
+    const imagePath = uploadData.path;
 
+    // ⭐ Insert product record
     const { error: insertError } = await supabase
-      .from('products')
+      .from("products")
       .insert([
         {
           title,
           description: desc,
           price,
-          image_path: imagePath
-        }
-      ])
+          image_path: imagePath,
+        },
+      ]);
 
-    setLoading(false)
+    setLoading(false);
 
-    if (insertError) {
-      return alert(insertError.message)
-    }
+    if (insertError) return alert(insertError.message);
 
-    setTitle('')
-    setDesc('')
-    setPrice('')
-    setFile(null)
+    // Reset form
+    setTitle("");
+    setDesc("");
+    setPrice("");
+    setFile(null);
 
-    onAdded && onAdded()
+    // Refresh admin panel data
+    if (onAdded) onAdded();
   }
 
   return (
-    <form className="space-y-3" onSubmit={handleAdd}>
-      <input
-        value={title}
-        onChange={e => setTitle(e.target.value)}
-        placeholder="Title"
-        className="input"
-      />
-      <textarea
-        value={desc}
-        onChange={e => setDesc(e.target.value)}
-        placeholder="Description"
-        className="input"
-      />
-      <input
-        value={price}
-        onChange={e => setPrice(e.target.value)}
-        placeholder="Price"
-        className="input"
-      />
-      <input
-        type="file"
-        accept="image/*"
-        onChange={e => setFile(e.target.files[0])}
-      />
-
-      <button
-        className="px-4 py-2 bg-green-600 text-white rounded"
-        disabled={loading}
-      >
-        {loading ? 'Uploading...' : 'Add Product'}
-      </button>
-    </form>
-  )
-}
+    <for
 
