@@ -1,0 +1,13 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  @apply font-poppins bg-gradient-to-br from-rose-50 via-amber-50 to-rose-100 text-slate-900;
+}
+
+.page-frame {
+  @apply min-h-screen m-3 md:m-5 border-8 border-rose-200 rounded-3xl shadow-2xl overflow-hidden bg-white/60;
+}
