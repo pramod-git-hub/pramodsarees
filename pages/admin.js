@@ -1,8 +1,8 @@
 import { useState } from 'react'
+import dynamic from 'next/dynamic'
 import { supabase } from '../lib/supabaseClient'
 
-
-export default function Admin() {
+function Admin() {
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
   const [price, setPrice] = useState('')
@@ -60,9 +60,9 @@ export default function Admin() {
     <div style={{ padding: 20 }}>
       <h1>Admin Panel</h1>
 
-      <input placeholder="Title" onChange={e => setTitle(e.target.value)} /><br /><br />
-      <textarea placeholder="Description" onChange={e => setDescription(e.target.value)} /><br /><br />
-      <input placeholder="Price" onChange={e => setPrice(e.target.value)} /><br /><br />
+      <input placeholder="Title" value={title} onChange={e => setTitle(e.target.value)} /><br /><br />
+      <textarea placeholder="Description" value={description} onChange={e => setDescription(e.target.value)} /><br /><br />
+      <input placeholder="Price" value={price} onChange={e => setPrice(e.target.value)} /><br /><br />
 
       <label>Multiple Images</label><br />
       <input type="file" multiple onChange={e => setImages(e.target.files)} /><br /><br />
@@ -76,4 +76,6 @@ export default function Admin() {
     </div>
   )
 }
+
+export default dynamic(() => Promise.resolve(Admin), { ssr: false })
 
