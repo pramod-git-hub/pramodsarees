@@ -1,0 +1,21 @@
+# Pramod Sarees - Full E-commerce
+
+## Env
+
+Create `.env.local`:
+
+NEXT_PUBLIC_STORE_NAME=Pramod Sarees
+NEXT_PUBLIC_SUPABASE_URL=YOUR_SUPABASE_URL
+NEXT_PUBLIC_SUPABASE_ANON_KEY=YOUR_SUPABASE_ANON_KEY
+NEXT_PUBLIC_ADMIN_EMAIL=vpramodkumar996@gmail.com
+NEXT_PUBLIC_ADMIN_PASSWORD=kurv1n@Nandini
+NEXT_PUBLIC_WHATSAPP_NUMBER=91XXXXXXXXXX
+
+NEXT_PUBLIC_RAZORPAY_KEY_ID=rzp_live_xxx
+RAZORPAY_KEY_ID=rzp_live_xxx
+RAZORPAY_KEY_SECRET=your_secret_key
+
+## Run
+
+npm install
+npm run dev
