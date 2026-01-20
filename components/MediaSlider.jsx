@@ -1,20 +1,18 @@
-
 import { Swiper, SwiperSlide } from 'swiper/react'
 import 'swiper/css'
 
 export default function MediaSlider({ images = [], video }) {
-  if ((!images || images.length === 0) && !video) return null
-
   return (
     <Swiper spaceBetween={10} slidesPerView={1}>
       {images.map((img, i) => (
         <SwiperSlide key={i}>
-          <img src={img} style={{ width: '100%', borderRadius: 8 }} />
+          <img src={img} style={{ width: '100%' }} />
         </SwiperSlide>
       ))}
+
       {video && (
         <SwiperSlide>
-          <video controls style={{ width: '100%', borderRadius: 8 }}>
+          <video controls style={{ width: '100%' }}>
             <source src={video} type="video/mp4" />
           </video>
         </SwiperSlide>
@@ -22,3 +20,4 @@ export default function MediaSlider({ images = [], video }) {
     </Swiper>
   )
 }
+
