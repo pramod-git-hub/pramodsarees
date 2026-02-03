@@ -1,5 +1,5 @@
 import { Swiper, SwiperSlide } from 'swiper/react'
-import 'swiper/swiper-bundle.css'
+import 'swiper/css/bundle'
 
 export default function MediaSlider({ images = [], video }) {
   if ((!images || images.length === 0) && !video) return null
