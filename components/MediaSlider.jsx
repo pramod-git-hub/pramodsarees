@@ -1,28 +1,43 @@
 import { Swiper, SwiperSlide } from 'swiper/react'
-import 'swiper/css/bundle'
+import 'swiper/css'
 
-export default function MediaSlider({ images = [], video }) {
-  if ((!images || images.length === 0) && !video) return null
+export default function MediaSlider({ images, video }) {
+  const safeImages = Array.isArray(images) ? images : []
+
+  // If no images and no video, show nothing
+  if (safeImages.length === 0 && !video) {
+    return (
+      <div className="h-64 flex items-center justify-center bg-gray-100 text-gray-400">
+        No media
+      </div>
+    )
+  }
 
   return (
     <Swiper spaceBetween={10} slidesPerView={1}>
-      {images.map((img, i) => (
+      {safeImages.map((img, i) => (
         <SwiperSlide key={i}>
           <img
             src={img}
-            alt="product"
-            style={{ width: '100%', borderRadius: 8 }}
+            alt="saree"
+            className="w-full h-64 object-cover"
           />
         </SwiperSlide>
       ))}
 
       {video && (
         <SwiperSlide>
-          <video controls style={{ width: '100%', borderRadius: 8 }}>
-            <source src={video} type="video/mp4" />
+          <video
+            controls
+            className="w-full h-64 object-cover"
+          >
+            <source src={video} />
           </video>
         </SwiperSlide>
       )}
     </Swiper>
   )
 }
+
+
+

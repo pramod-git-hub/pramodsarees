@@ -1,17 +1,8 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { supabase } from '../../lib/supabaseClient'
 
 export default function AdminPage() {
-  const [mounted, setMounted] = useState(false)
-
-  useEffect(() => {
-    setMounted(true)
-  }, [])
-
-  if (!mounted) {
-    return null
-  }
-
+  // ✅ ALL hooks at top level (VERY IMPORTANT)
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
   const [price, setPrice] = useState('')
@@ -19,69 +10,114 @@ export default function AdminPage() {
   const [video, setVideo] = useState(null)
   const [loading, setLoading] = useState(false)
 
-  const uploadFile = async (file, bucket) => {
+  const uploadFile = async (file) => {
     const fileName = `${Date.now()}-${file.name}`
-    const { error } = await supabase.storage
-      .from(bucket)
+    const { error } = await supabase
+      .storage
+      .from('product-images')
       .upload(fileName, file)
 
     if (error) throw error
 
-    return `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/${bucket}/${fileName}`
+    return supabase
+      .storage
+      .from('product-images')
+      .getPublicUrl(fileName).data.publicUrl
   }
 
-  const handleSubmit = async () => {
-    try {
-      setLoading(true)
+ const handleSubmit = async () => {
+  if (!title || !price) {
+    alert('Title and price required')
+    return
+  }
 
-      const imageUrls = []
-      for (let img of images) {
-        const url = await uploadFile(img, 'product-images')
+  setLoading(true)
+
+  try {
+    const imageUrls = []
+
+    if (images && images.length > 0) {
+      for (const img of images) {
+        const url = await uploadFile(img)
         imageUrls.push(url)
       }
-
-      const videoUrl = video
-        ? await uploadFile(video, 'product-videos')
-        : null
-
-      await supabase.from('products').insert({
-        title,
-        description,
-        price,
-        images: imageUrls,
-        video_url: videoUrl
-      })
-
-      alert('Product added successfully')
-      setTitle('')
-      setDescription('')
-      setPrice('')
-      setImages([])
-      setVideo(null)
-    } catch (e) {
-      alert(e.message)
-    } finally {
-      setLoading(false)
     }
+
+    let videoUrl = null
+    if (video) {
+      videoUrl = await uploadFile(video)
+    }
+
+    await supabase.from('products').insert({
+      title,
+      description,
+      price,
+      images: imageUrls.length > 0 ? imageUrls : [],
+      video: videoUrl
+    })
+
+    alert('Product added')
+    setTitle('')
+    setDescription('')
+    setPrice('')
+    setImages([])
+    setVideo(null)
+  } catch (e) {
+    alert(e.message)
   }
 
+  setLoading(false)
+}
+
+  // ✅ JSX return ONLY (no hooks below this)
   return (
-    <div style={{ padding: 20 }}>
-      <h1>Admin Panel</h1>
+    <div className="max-w-xl mx-auto p-6">
+      <h1 className="text-2xl font-bold mb-4">Admin – Add Product</h1>
 
-      <input placeholder="Title" value={title} onChange={e => setTitle(e.target.value)} /><br /><br />
-      <textarea placeholder="Description" value={description} onChange={e => setDescription(e.target.value)} /><br /><br />
-      <input placeholder="Price" value={price} onChange={e => setPrice(e.target.value)} /><br /><br />
+      <input
+        className="border p-2 w-full mb-3"
+        placeholder="Title"
+        value={title}
+        onChange={(e) => setTitle(e.target.value)}
+      />
 
-      <label>Multiple Images</label><br />
-      <input type="file" multiple onChange={e => setImages(e.target.files)} /><br /><br />
+      <textarea
+        className="border p-2 w-full mb-3"
+        placeholder="Description"
+        value={description}
+        onChange={(e) => setDescription(e.target.value)}
+      />
 
-      <label>One Video</label><br />
-      <input type="file" accept="video/*" onChange={e => setVideo(e.target.files[0])} /><br /><br />
+      <input
+        className="border p-2 w-full mb-3"
+        placeholder="Price"
+        value={price}
+        onChange={(e) => setPrice(e.target.value)}
+      />
 
-      <button onClick={handleSubmit} disabled={loading}>
+      <input
+        type="file"
+        multiple
+        accept="image/*"
+        className="mb-3"
+        onChange={(e) => setImages([...e.target.files])}
+      />
+
+      <input
+        type="file"
+        accept="video/*"
+        className="mb-3"
+        onChange={(e) => setVideo(e.target.files[0])}
+      />
+
+      <button
+        onClick={handleSubmit}
+        disabled={loading}
+        className="bg-red-500 text-white px-4 py-2 rounded"
+      >
         {loading ? 'Uploading...' : 'Add Product'}
       </button>
     </div>
   )
 }
+
