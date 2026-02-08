@@ -1,57 +1,54 @@
 import { Swiper, SwiperSlide } from "swiper/react"
-import { Pagination } from "swiper/modules"
+import { Navigation, Pagination } from "swiper/modules"
+
 import "swiper/css"
+import "swiper/css/navigation"
 import "swiper/css/pagination"
 
-export default function MediaSlider({ images = [], video }) {
-  // 🛡 safety: force images to array
-  const imageList = Array.isArray(images)
-    ? images
-    : typeof images === "string" && images.length > 0
-    ? images.split(",")
-    : []
+export default function MediaSlider({ images = [], video = null }) {
+  const hasImages = Array.isArray(images) && images.length > 0
+  const hasVideo = !!video
 
-  if (imageList.length === 0 && !video) {
+  if (!hasImages && !hasVideo) {
     return (
-      <div className="flex items-center justify-center h-56 bg-gray-100 text-gray-400">
+      <div className="h-64 flex items-center justify-center text-gray-400">
         No media
       </div>
     )
   }
 
   return (
-    <Swiper
-      modules={[Pagination]}
-      pagination={{ clickable: true }}
-      spaceBetween={10}
-      slidesPerView={1}
-      className="rounded-lg overflow-hidden"
-    >
-      {/* ✅ Images */}
-      {imageList.map((img, i) => (
-        <SwiperSlide key={`img-${i}`}>
-          <img
-            src={img}
-            alt={`product-${i}`}
-            className="w-full h-56 object-cover"
-          />
-        </SwiperSlide>
-      ))}
+    <div className="w-full h-64">
+      <Swiper
+        modules={[Navigation, Pagination]}
+        navigation
+        pagination={{ clickable: true }}
+        slidesPerView={1}
+        className="w-full h-full"
+      >
+        {/* IMAGES */}
+        {hasImages &&
+          images.map((img, i) => (
+            <SwiperSlide key={`img-${i}`}>
+              <img
+                src={img}
+                alt={`product-${i}`}
+                className="w-full h-64 object-cover"
+              />
+            </SwiperSlide>
+          ))}
 
-      {/* ✅ Video */}
-      {video && (
-        <SwiperSlide key="video">
-          <video
-            src={video}
-            controls
-            className="w-full h-56 object-cover"
-          />
-        </SwiperSlide>
-      )}
-    </Swiper>
+        {/* VIDEO */}
+        {hasVideo && (
+          <SwiperSlide>
+            <video
+              src={video}
+              controls
+              className="w-full h-64 object-cover"
+            />
+          </SwiperSlide>
+        )}
+      </Swiper>
+    </div>
   )
 }
-
-
-
-

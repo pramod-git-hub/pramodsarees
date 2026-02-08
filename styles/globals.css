@@ -1,7 +1,14 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+.swiper-button-next,
+.swiper-button-prev {
+  color: #ef4444;
+  background: rgba(255, 255, 255, 0.9);
+  width: 36px;
+  height: 36px;
+  border-radius: 9999px;
+}
 
-body {
-  @apply bg-gradient-to-br from-rose-50 via-amber-50 to-rose-100 text-slate-900;
+.swiper-button-next::after,
+.swiper-button-prev::after {
+  font-size: 14px;
+  font-weight: bold;
 }
